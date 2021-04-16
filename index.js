@@ -55,18 +55,38 @@ let topMovies = [
   },
 ];
 
+let requestTime = (req, res, next) => {
+  req.requestTime = Date.now();
+  next();
+};
+
+
+app.use(morgan('common'));
 app.use(express.static('public'));
+app.use(requestTime);
+
+// Error Handling
+app.use((err, req, res, next) => {
+  console.log(err.stack);
+  res.status(500).send('Oops, something went wrong.');
+});
 
 // GET requests
 app.get('/', (req, res) => {
-  res.send('Welcome to my movie club!');
+  let responseText = 'Welcome to my movie club!!';
+  responseText += '<small>Requested at: ' + req.requestTime + '</small>';
+  res.send(responseText);
 });
 
 app.get('/documentation', (req, res) => {
+  let responseText = 'Documentation for my api';
+  responseText += '<small>Requested at: ' + req.requestTime + '</small>';
   res.sendFile('public/documentation.html', { root: __dirname });
 });
 
 app.get('/movies', (req, res) => {
+  let responseText = 'Top Movies of Marilyn Monroe';
+  responseText += '<small>Requested at: ' + req.requestTime + '</small>';
   res.json(topMovies);
 });
 
