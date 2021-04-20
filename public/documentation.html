@@ -4,12 +4,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movie API Documentation</title>
+  <title>Movie API</title>
+  <style>
+    table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    th, td {
+    padding: 5px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Movie API Documentation</h1>
-  <p>This is an api that allows users to retrieve movie data.</p>
+  <h1>Movie API</h1>
+  <p>This is an api that allows users to retrieve movie data such as name of the movie, genre, directors etc.
+     Users will also be able to register and edit their favorite movies list or deregister.</p>
+
+     <table>
+ <tr>
+   <th>Request</th>
+   <th>URL</th>
+   <th>HTTP Method</th>
+   <th>URL parameters</th>
+   <th>Request body data format</th>
+   <th>Respond body data format</th>
+ </tr>
+ <tr>
+   <td>Get a list of ALL movies</td>
+   <td>/movies</td>
+   <td>GET</td>
+   <td></td>
+   <td>None</td>
+   <td>A JSON object holding data about all movies</td>
+ </tr>
+ <tr>
+   <td>Get data (description, genre, director, image URL, whether it’s featured or not) about a single movie by title</td>
+   <td>/movies/[Title]</td>
+   <td>GET</td>
+   <td>/movies/:title</td>
+   <td>None</td>
+   <td>A JSON object holding data about a single movie containing a title, description, genre, director, image and featured. <br><br>
+   Example: <br>
+   {
+   "title": "How to Marry a Millionaire",
+   "description": "How to Marry a Millionaire is a 1953 American romantic comedy film. ",
+   "director": "Jean Negulesco",
+   "genre":"Romantic comedy",
+   "image": "https://images-na.ssl-images-amazon.com/images/I/41MKEDHVBTL._SY445_.jpg",
+   "featured": true
+ }<br></td>
+ </tr>
+ <tr>
+   <td>Get data about a movie genre by name</td>
+   <td>/movies/genres/[Genre]</td>
+   <td>GET</td>
+   <td>/movies/genres/:genre</td>
+   <td>None</td>
+   <td>A JSON object holding data about the genre</td>
+ </tr>
+ <tr>
+   <td>Get data about a movie director by name</td>
+   <td>/movies/directors/[Name]</td>
+   <td>GET</td>
+   <td>/movies/directors/:name</td>
+   <td>None</td>
+   <td>A JSON object holding data about the director</td>
+ </tr>
+ <tr>
+   <td>Register new user</td>
+   <td>/users</td>
+   <td>POST</td>
+   <td></td>
+   <td>A JSON object holding data about the user to create. <br> Example: <br> { “name” : “John Doe",
+“Username”: “johndoe”}</td>
+   <td>A JSON object holding data about the student that was added.
+<br>Example: <br> { “name” : “Jane Doe",
+“Username”: “janedoe”}</td>
+ </tr>
+ <tr>
+   <td>Update a user information</td>
+   <td>/users/[Username]</td>
+   <td>PUT</td>
+   <td>/users/:username</td>
+   <td>None</td>
+   <td>A text message with the info that was updated.</td>
+ </tr>
+ <tr>
+   <td>Add a movie to Favourites </td>
+   <td>/users/[Username]/favourites</td>
+   <td>POST</td>
+   <td>/users/:username/favourites</td>
+   <td>A JSON object holding data about the movie to add to favourites.<br> Example: <br>{ “title” : “How to Marry a Millionaire"}</td>
+   <td>A JSON object holding data about the movie that was added to favourites. <br> Example:<br> { “title” : “How to Marry a Millionaire"}</td>
+ </tr>
+ <tr>
+   <td>Remove movie from Favourites</td>
+   <td>/users/[Username]/favourites/[Title]</td>
+   <td>DELETE</td>
+   <td>/users/:username/favourites/:title</td>
+   <td>None</td>
+   <td>A message indicating whether the movie was successfully removed from favourites.</td>
+ </tr>
+ <tr>
+   <td>Unregister an existing user</td>
+   <td>/users/[Username]</td>
+   <td>DELETE</td>
+   <td>/users/:username</td>
+   <td>None</td>
+   <td>A text message indicating whether the user was successfully unregistered</td>
+ </tr>
+</table>
 </body>
 
 </html>
