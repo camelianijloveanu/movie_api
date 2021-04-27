@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
+const Star = Models.Star;
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 const bodyParser = require('body-parser');
@@ -36,7 +37,6 @@ app.get('/movies/:Title', (req, res) => {
 });
 
 app.get('/movies/directors/:Name', (req, res) => {
-  app.get('/movies/directors/:Name', (req, res) => {
   Movies.findOne({'Director.Name': req.params.Name}).then((director) => {
     res.status(201).json(director.Director);
   }).catch((err) => {
@@ -46,7 +46,6 @@ app.get('/movies/directors/:Name', (req, res) => {
 });
 
 app.get('/movies/genres/:Genre', (req, res) => {
-  app.get('/movies/genres/:Genre', (req, res) => {
   Movies.findOne({'Genre.Name': req.params.Genre}).then((genre) => {
     res.status(201).json(genre.Genre);
   }).catch((err) => {
@@ -59,6 +58,12 @@ app.get('/', (req, res) => {
   let responseText = 'Welcome to my movie club!!';
   responseText += '<small>Requested at: ' + req.requestTime + '</small>';
   res.send(responseText);
+});
+
+app.get('/documentation', (req, res) => {
+  let responseText = 'Documentation for my api';
+  responseText += '<small>Requested at: ' + req.requestTime + '</small>';
+  res.sendFile('public/documentation.html', { root: __dirname });
 });
 
 app.get('/movies', (req, res) => {
@@ -111,7 +116,6 @@ app.post('/users', (req, res) => {
     res.status(500).send('Error: ' + error);
   });
   });
-});
 
 app.post('/users/:Username/Movies/:MovieID', (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, {
