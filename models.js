@@ -25,7 +25,7 @@ let userSchema = mongoose.Schema({
   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
 });
 
-let starSchema = mongoose.Schema({
+let storySchema = mongoose.Schema({
   Name: String,
   Bio: String,
   Birth: Date,
@@ -35,8 +35,8 @@ let starSchema = mongoose.Schema({
 
 let Movie = mongoose.model('Movie', movieSchema);
 let User = mongoose.model('User', userSchema);
-let Star = mongoose.model('Star', starSchema);
+let Story = mongoose.model('Story', storySchema);
 
 module.exports.Movie = Movie;
 module.exports.User = User;
-module.exports.Star = Star;
+module.exports.Story = Story;
