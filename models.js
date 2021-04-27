@@ -26,9 +26,9 @@ let userSchema = mongoose.Schema({
 let starSchema = mongoose.Schema({
   Name: String,
   Bio: String,
-  Birth: Date,
+  Birth: String,
   Death: String,
-  ImagePath: String,
+  ImagePath: String
 });
 
 let Movie = mongoose.model('Movie', movieSchema);
