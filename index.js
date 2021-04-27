@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
-const Star = Models.Star;
+const Stories = Models.Story;
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 const bodyParser = require('body-parser');
@@ -75,10 +75,10 @@ app.get('/movies', (req, res) => {
   });
 });
 
-app.get("/star", (req, res) => {
-star.find()
-.then((star) => {
-res.status(200).json(star);
+app.get("/stories", (req, res) => {
+Stories.find()
+.then((stories) => {
+res.status(200).json(stories);
 })
 .catch((err) => {
 console.log(err);
@@ -99,25 +99,30 @@ app.get('/users/:Username', (req, res) => {
 
 // POST, PUT and DELETE requests
 app.post('/users', (req, res) => {
-  Users.findOne({Username: req.body.Username}).then((user) => {
-    if(user) {
-      return res.status(400).send(req.body.Username + ' already exists.');
-    } else {
-      Users.create({
-        Username: req.body.Username,
-        Password: req.body.Password,
-        Email: req.body.Email,
-        Birthday: req.body.Birthday
-      }).then((user) => {res.status(201).json(user)}).catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      })
-    }
-  }).catch((error) => {
-    console.error(error);
-    res.status(500).send('Error: ' + error);
-  });
-  });
+  Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + ' already exists');
+      } else {
+        Users
+          .create({
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) =>{res.status(201).json(user) })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error: ' + error);
+        })
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
+});
 
 app.post('/users/:Username/Movies/:MovieID', (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, {
