@@ -9,7 +9,9 @@ let movieSchema = mongoose.Schema({
   },
   Director: {
     Name: String,
-    Bio: String
+    Bio: String,
+    Birth: Date,
+    Death: Date
   },
   ImagePath: String,
   Featured: Boolean
@@ -26,8 +28,8 @@ let userSchema = mongoose.Schema({
 let starSchema = mongoose.Schema({
   Name: String,
   Bio: String,
-  Birth: String,
-  Death: String,
+  Birth: Date,
+  Death: Date,
   ImagePath: String
 });
 
