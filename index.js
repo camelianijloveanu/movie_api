@@ -75,13 +75,15 @@ app.get('/movies', (req, res) => {
   });
 });
 
-app.get('/star', (req, res) => {
-    Star.find().then((star) => {
-    res.status(201).json(star);
-  }).catch((err) => {
-    console.error(err);
-    res.status(500).send('Error: ' + err)
-  });
+app.get("/star", (req, res) => {
+star.find()
+.then((star) => {
+res.status(200).json(star);
+})
+.catch((err) => {
+console.log(err);
+res.status(500).send("Error: " + err);
+});
 });
 
 app.get('/users/:Username', (req, res) => {
