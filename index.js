@@ -8,6 +8,8 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const Stories = Models.Story;
 const port = process.env.PORT || 8080;
+const passport = require('passport');
+require('./passport');
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 const bodyParser = require('body-parser');
@@ -20,6 +22,7 @@ let requestTime = (req, res, next) => {
 app.use(bodyParser.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
+let auth = require('./auth')(app);
 
 // Error Handling
 app.use((err, req, res, next) => {
@@ -28,82 +31,76 @@ app.use((err, req, res, next) => {
 });
 
 // GET requests
-app.get('/movies/:Title', (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ Title: req.params.Title }).then((movie) => {
     res.status(200).json(movie);
   }).catch((err) => {
     console.error(err);
-    res.status(500).send('Error: ' + err)
+    res.status(500).json('Error: ' + err)
   });
 });
 
-app.get('/movies/directors/:Name', (req, res) => {
+app.get('/movies/directors/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({'Director.Name': req.params.Name}).then((director) => {
     res.status(200).json(director.Director);
   }).catch((err) => {
     console.error(err);
-    res.status(500).send('Error: ' + err)
+    res.status(500).json('Error: ' + err)
   });
 });
 
-app.get('/movies/genres/:Genre', (req, res) => {
+app.get('/movies/genres/:Genre', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({'Genre.Name': req.params.Genre}).then((genre) => {
     res.status(200).json(genre.Genre);
   }).catch((err) => {
     console.error(err);
-    res.status(500).send('Error: ' + err)
+    res.status(500).json('Error: ' + err)
   });
 });
 
-app.get('/', (req, res) => {
+app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
   let responseText = 'Welcome to my movie club!!';
   responseText += '<small>Requested at: ' + req.requestTime + '</small>';
-  res.send(responseText);
+  res.json(responseText);
 });
 
-app.get('/documentation', (req, res) => {
-  let responseText = 'Documentation for my api';
-  responseText += '<small>Requested at: ' + req.requestTime + '</small>';
-  res.sendFile('public/documentation.html', { root: __dirname });
-});
-
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find().then((movies) => {
     res.status(200).json(movies);
   }).catch((err) => {
     console.error(err);
-    res.status(500).send('Error: ' + err)
+    res.status(500).json('Error: ' + err)
   });
 });
 
-app.get("/stories", (req, res) => {
+app.get("/stories", passport.authenticate('jwt', { session: false }), (req, res) => {
 Stories.find()
 .then((stories) => {
 res.status(200).json(stories);
 })
 .catch((err) => {
 console.log(err);
-res.status(500).send("Error: " + err);
+res.status(500).json("Error: " + err);
 });
 });
 
-app.get('/users/:Username', (req, res) => {
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ Username: req.params.Username })
     .then((user) => {
       res.json(user);
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error: ' + err);
+      res.status(500).json('Error: ' + err);
     });
 });
 
 // POST, PUT and DELETE requests
-app.post('/users', (req, res) => {
+app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
-        return res.status(400).send(req.body.Username + ' already exists');
+        return res.status(400).json(req.body.Username + ' already exists');
       } else {
         Users
           .create({
@@ -115,17 +112,17 @@ app.post('/users', (req, res) => {
           .then((user) =>{res.status(201).json(user) })
         .catch((error) => {
           console.error(error);
-          res.status(500).send('Error: ' + error);
+          res.status(500).json('Error: ' + error);
         })
       }
     })
     .catch((error) => {
       console.error(error);
-      res.status(500).send('Error: ' + error);
+      res.status(500).json('Error: ' + error);
     });
 });
 
-app.post('/users/:Username/Movies/:MovieID', (req, res) => {
+app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, {
      $push: { FavoriteMovies: req.params.MovieID }
    },
@@ -133,14 +130,14 @@ app.post('/users/:Username/Movies/:MovieID', (req, res) => {
   (err, updatedUser) => {
     if (err) {
       console.error(err);
-      res.status(500).send('Error: ' + err);
+      res.status(500).json('Error: ' + err);
     } else {
       res.json(updatedUser);
     }
   });
 });
 
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
@@ -153,7 +150,7 @@ app.put('/users/:Username', (req, res) => {
   (err, updatedUser) => {
     if(err) {
       console.error(err);
-      res.status(500).send('Error: ' + err);
+      res.status(500).json('Error: ' + err);
     } else {
       res.json(updatedUser);
     }
@@ -161,23 +158,23 @@ app.put('/users/:Username', (req, res) => {
 });
 
 
-app.delete('/users/:Username', (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
       if (!user) {
-        res.status(404).send(req.params.Username + ' was not found');
+        res.status(404).json(req.params.Username + ' was not found');
       } else {
-        res.status(200).send(req.params.Username + ' was deleted.');
+        res.status(200).json(req.params.Username + ' was deleted.');
       }
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send('Error: ' + err);
+      res.status(500).json('Error: ' + err);
     });
 });
 
 
 // listen for requests
 app.listen(port, () => {
-  console.log('Your app is listening on port ${port}.'');
+  console.log('Your app is listening on port ${port}.');
 })
