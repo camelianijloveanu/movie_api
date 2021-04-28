@@ -7,6 +7,7 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const Stories = Models.Story;
+const port = process.env.PORT || 8080;
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 const bodyParser = require('body-parser');
@@ -29,7 +30,7 @@ app.use((err, req, res, next) => {
 // GET requests
 app.get('/movies/:Title', (req, res) => {
   Movies.findOne({ Title: req.params.Title }).then((movie) => {
-    res.status(201).json(movie);
+    res.status(200).json(movie);
   }).catch((err) => {
     console.error(err);
     res.status(500).send('Error: ' + err)
@@ -38,7 +39,7 @@ app.get('/movies/:Title', (req, res) => {
 
 app.get('/movies/directors/:Name', (req, res) => {
   Movies.findOne({'Director.Name': req.params.Name}).then((director) => {
-    res.status(201).json(director.Director);
+    res.status(200).json(director.Director);
   }).catch((err) => {
     console.error(err);
     res.status(500).send('Error: ' + err)
@@ -47,7 +48,7 @@ app.get('/movies/directors/:Name', (req, res) => {
 
 app.get('/movies/genres/:Genre', (req, res) => {
   Movies.findOne({'Genre.Name': req.params.Genre}).then((genre) => {
-    res.status(201).json(genre.Genre);
+    res.status(200).json(genre.Genre);
   }).catch((err) => {
     console.error(err);
     res.status(500).send('Error: ' + err)
@@ -68,7 +69,7 @@ app.get('/documentation', (req, res) => {
 
 app.get('/movies', (req, res) => {
     Movies.find().then((movies) => {
-    res.status(201).json(movies);
+    res.status(200).json(movies);
   }).catch((err) => {
     console.error(err);
     res.status(500).send('Error: ' + err)
@@ -164,7 +165,7 @@ app.delete('/users/:Username', (req, res) => {
   Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
       if (!user) {
-        res.status(400).send(req.params.Username + ' was not found');
+        res.status(404).send(req.params.Username + ' was not found');
       } else {
         res.status(200).send(req.params.Username + ' was deleted.');
       }
@@ -177,6 +178,6 @@ app.delete('/users/:Username', (req, res) => {
 
 
 // listen for requests
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
+app.listen(port, () => {
+  console.log('Your app is listening on port ${port}.'');
 })
