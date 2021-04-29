@@ -7,9 +7,11 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const Stories = Models.Story;
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 const passport = require('passport');
 require('./passport');
+const cors = require('cors');
+
 
 mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 const bodyParser = require('body-parser');
@@ -22,6 +24,7 @@ let requestTime = (req, res, next) => {
 app.use(bodyParser.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
+app.use(cors());
 let auth = require('./auth')(app);
 
 // Error Handling
@@ -97,15 +100,16 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 
 // POST, PUT and DELETE requests
 app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+  let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
-        return res.status(400).json(req.body.Username + ' already exists');
+        return res.status(409).json(req.body.Username + ' already exists');
       } else {
         Users
           .create({
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
@@ -123,6 +127,7 @@ app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) 
 });
 
 app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
+  let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOneAndUpdate({ Username: req.params.Username }, {
      $push: { FavoriteMovies: req.params.MovieID }
    },
@@ -141,7 +146,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (r
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
-      Password: req.body.Password,
+      Password: hashedPassword,
       Email: req.body.Email,
       Birthday: req.body.Birthday
     }
@@ -175,6 +180,6 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
 
 
 // listen for requests
-app.listen(port, () => {
-  console.log('Your app is listening on port ${port}.');
-})
+app.listen(PORT, () => {
+  console.log(`Your app is listening on port ${PORT}`);
+});
