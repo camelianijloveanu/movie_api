@@ -3,19 +3,21 @@ const express = require('express');
 const morgan = require('morgan');
 const app = express();
 const mongoose = require('mongoose');
+const dotenv = require ('dotenv');
 const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const Stories = Models.Story;
-const PORT = process.env.PORT || 8080;
 const passport = require('passport');
 require('./passport');
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
-
+dotenv.config();
 
 // mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+
 
 const bodyParser = require('body-parser');
 
@@ -204,6 +206,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
 
 
 // listen for requests
-app.listen(PORT, () => {
-  console.log(`Your app is listening on port ${PORT}`);
-});
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () => {
+  console.log('Listening on Port' + port);
+})
