@@ -26,7 +26,9 @@ module.exports = (router) => {
           res.send(error);
         }
         let token = generateJWTToken(user.toJSON());
-        return res.json({ user, token });
+        let userObj = user.toObject();
+        delete userObj.Password;
+        return res.json({ userObj, token });
       });
     })(req, res);
   });

@@ -14,7 +14,9 @@ const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 const bodyParser = require('body-parser');
 
 let requestTime = (req, res, next) => {
@@ -138,7 +140,7 @@ app.post('/users', passport.authenticate('jwt', { session: false }),
     });
 });
 
-app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) =>
+app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, {
      $push: { FavoriteMovies: req.params.MovieID }
    },
