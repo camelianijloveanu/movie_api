@@ -66,7 +66,6 @@ app.get('/movies/genres/:Genre', passport.authenticate('jwt', { session: false }
 
 app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
   let responseText = 'Welcome to my movie club!!';
-  responseText += '<small>Requested at: ' + req.requestTime + '</small>';
   res.json(responseText);
 });
 
