@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
 });
 
 // GET requests
-app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies/:Title', (req, res) => {
   Movies.findOne({ Title: req.params.Title }).then((movie) => {
     res.status(200).json(movie);
   }).catch((err) => {
