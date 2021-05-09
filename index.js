@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
 });
 
 // GET requests
-app.get('/movies/:Title', (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ Title: req.params.Title }).then((movie) => {
     res.status(200).json(movie);
   }).catch((err) => {
@@ -71,7 +71,7 @@ app.get('/', (req, res) => {
   res.json(responseText);
 });
 
-app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies', (req, res) => {
     Movies.find().then((movies) => {
     res.status(200).json(movies);
   }).catch((err) => {
