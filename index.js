@@ -29,7 +29,7 @@ let requestTime = (req, res, next) => {
 app.use(bodyParser.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
-app.use(cors());
+app.use(cors({credentials: true, origin: true}));
 let auth = require('./auth')(app);
 
 // Error Handling
