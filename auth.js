@@ -4,6 +4,12 @@ const jwt = require('jsonwebtoken'),
 
 require('./passport');
 
+/**
+ * function to generate the authentication token to allow users to acces the API 
+ * @param {string} user 
+ * @returns JWTToken
+ */
+
 let generateJWTToken = (user) => {
   return jwt.sign(user, jwtSecret, {
     subject: user.Username,
